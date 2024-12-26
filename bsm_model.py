@@ -65,17 +65,18 @@ class BSM_model:
         '''
         S = []
         for i in range(I):
-            path = []
+            h = []
             for t in range(M + 1):
                 if t == 0:
-                   path.append(S0)
+                   h.append(S0)
                 else:
                    z = gauss(0.0, 1.0)
-                   St = path[t - 1] * exp((r - 0.5 * sigma ** 2) * dt
+                   St = h[t - 1] * exp((r - 0.5 * sigma ** 2) * dt
                    + sigma * sqrt(dt) * z)
-                   path.append(St)
-            S.append(path)
-        C0=exp(-r * T) * sum([max(path[-1] - K, 0) for path in S]) / I
+                   h.append(St)
+            S.append(h)
+        ##Monte Carlo estimator##
+        C0=exp(-r * T) * sum([max(h[-1] - K, 0) for h in S]) / I
         sigma_est=0
         for i in range(it):
             sigma_est -= (BSM_model.bsm_call_value(self) - C0) / BSM_model.bsm_vega(self)
@@ -88,13 +89,13 @@ if __name__=="__main__":
     it=100 #number of iterations
     M = 50 # number of time steps
     dt = T / M # length of time interval
-    I = 250000 # number of paths
+    I = 250000 # number of paths=h
     sigma = 0.2 # volatility
     BSM_model_val=BSM_model(S0, K,T,r,sigma)   
     print('Valuation of European call option in BSM model:',BSM_model_val.bsm_call_value())
     print('Vega of European option in BSM model:',BSM_model_val.bsm_vega())
     print('Implied volatility of European call option in BSM model:',BSM_model_val.bsm_call_imp_vol(T,M))
-    
+ 
     
     
     
